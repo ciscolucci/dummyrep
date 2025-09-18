@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hangman Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; }
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #bbb;
+      text-align: center;
+    }
+    .word {
+      font-size: 2em;
+      letter-spacing: 10px;
+      margin-bottom: 24px;
+    }
+    .guessed-letters {
+      margin-bottom: 20px;
+      font-size: 1.1em;
+      color: #555;
+    }
+    .inputs {
+      margin-bottom: 18px;
+    }
+    input[type="text"] {
+      width: 40px;
+      font-size: 1.2em;
+      text-align: center;
+    }
+    button {
+      font-size: 1em;
+      padding: 6px 16px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+      background: #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #ddd; }
+    .hangman {
+      font-family: monospace;
+      white-space: pre;
+      margin: 12px 0;
+      color: #e74c3c;
+    }
+    .end-message {
+      font-size: 1.3em;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Hangman</h2>
+    <div class="hangman" id="hangman"></div>
+    <div class="word" id="word"></div>
+    <div class="guessed-letters" id="guessed"></div>
+    <div class="inputs">
+      <input type="text" id="letterInput" maxlength="1" autocomplete="off" disabled>
+      <button onclick="guessLetter()">Guess</button>
+      <button onclick="resetGame()">Reset</button>
+    </div>
+    <div class="end-message" id="message"></div>
+  </div>
+  <script>
+    const words = [
+      "javascript", "hangman", "programming", "browser", "function",
+      "variable", "object", "window", "element", "coding"
+    ];
+    let selectedWord = "";
+    let displayWord = [];
+    let guessedLetters = [];
+    let wrongGuesses = 0;
+    const maxWrong = 6;
+    const hangmanStages = [
+      `
+      
+      
+      
+      
+      
+      =========
+      `,
+      `
+      
+      |
+      |
+      |
+      |
+      =========
+      `,
+      `
+      ______
+      |
+      |
+      |
+      |
+      =========
+      `,
+      `
+      ______
+      |    |
+      |    O
+      |
+      |
+      =========
+      `,
+      `
+      ______
+      |    |
+      |    O
+      |   /|\\
+      |
+      =========
+      `,
+      `
+      ______
+      |    |
+      |    O
+      |   /|\\
+      |   / \\
+      =========
+      `
+    ];
+
+    function pickWord() {
+      selectedWord = words[Math.floor(Math.random() * words.length)];
+      displayWord = Array(selectedWord.length).fill("_");
+      guessedLetters = [];
+      wrongGuesses = 0;
+      document.getElementById("message").textContent = "";
+      document.getElementById("letterInput").disabled = false;
+      document.getElementById("letterInput").value = "";
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById("word").textContent = displayWord.join(" ");
+      document.getElementById("guessed").textContent = 
+        "Guessed: " + guessedLetters.join(", ");
+      document.getElementById("hangman").textContent = hangmanStages[wrongGuesses];
+    }
+
+    function guessLetter() {
+      const input = document.getElementById("letterInput");
+      let letter = input.value.toLowerCase();
+      input.value = "";
+      if (!letter.match(/^[a-z]$/)) {
+        alert("Please enter a single letter.");
+        return;
+      }
+      if (guessedLetters.includes(letter) || displayWord.includes(letter)) {
+        alert("You've already guessed that letter.");
+        return;
+      }
+      guessedLetters.push(letter);
+      if (selectedWord.includes(letter)) {
+        for (let i = 0; i < selectedWord.length; i++) {
+          if (selectedWord[i] === letter) {
+            displayWord[i] = letter;
+          }
+        }
+      } else {
+        wrongGuesses++;
+      }
+      checkGameStatus();
+      updateDisplay();
+    }
+
+    function checkGameStatus() {
+      if (!displayWord.includes("_")) {
+        document.getElementById("message").textContent = "Congratulations! You won!";
+        document.getElementById("letterInput").disabled = true;
+      } else if (wrongGuesses >= maxWrong) {
+        document.getElementById("message").textContent = 
+          `Game Over! The word was "${selectedWord}".`;
+        document.getElementById("word").textContent = selectedWord.split("").join(" ");
+        document.getElementById("letterInput").disabled = true;
+      }
+    }
+
+    function resetGame() {
+      pickWord();
+    }
+
+    document.getElementById("letterInput").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") {
+        guessLetter();
+      }
+    });
+
+    // Initialize
+    pickWord();
+  </script>
+</body>
+</html>
