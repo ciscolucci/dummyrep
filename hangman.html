@@ -69,14 +69,13 @@
   </div>
   <script>
     const words = [
-      "javascript", "hangman", "programming", "browser", "function",
-      "variable", "object", "window", "element", "coding"
+      "antidisestablishmentarianism", "supercalifragilisticexpialidocious", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     ];
     let selectedWord = "";
     let displayWord = [];
     let guessedLetters = [];
     let wrongGuesses = 0;
-    const maxWrong = 6;
+    const maxWrong = 8;
     const hangmanStages = [
       `
       
@@ -110,6 +109,24 @@
       |
       =========
       `,
+      `
+      ______
+      |    |
+      |    O
+      |    |
+      |
+      =========
+      `,
+      
+      `
+      ______
+      |    |
+      |    O
+      |   /|
+      |
+      =========
+      `,
+      
       `
       ______
       |    |
@@ -199,3 +216,4 @@
   </script>
 </body>
 </html>
+
